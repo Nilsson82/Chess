@@ -4,4 +4,63 @@ using UnityEngine.UI;
 public class Pawn : BasePiece
 {
 
+    private bool mIsFirstMove = true;
+
+    public override void Setup(Color newTeamColor, Color32 newSpriteColor, PieceManager newPieceManager)
+    {
+        // Base setup
+        base.Setup(newTeamColor, newSpriteColor, newPieceManager);
+
+        // Reset
+        mIsFirstMove = true;
+
+        // Pawn stuff
+        mMovement = mColor == Color.white ? new Vector3Int(0, 1, 1) : new Vector3Int(0, -1, -1);
+        GetComponent<Image>().sprite = Resources.Load<Sprite>("T_Pawn");
+    }
+
+    protected override void Move()
+    {
+        base.Move();
+
+        mIsFirstMove = true;
+    }
+
+    private bool MatchesState(int targetX, int targetY, CellState targetState)
+    {
+        CellState cellState = CellState.None;
+        cellState = mCurrentCell.mBoard.ValidateCell(targetX, targetY, this);
+
+        if(cellState == targetState)
+        {
+            mHighlightedCells.Add(mCurrentCell.mBoard.mAllCells[targetX, targetY]);
+            return true;
+        }
+
+        return false;
+    }
+
+    protected override void CheckPathing()
+    {
+        // Target position
+        int targetX = mCurrentCell.mBoardPosition.x;
+        int targetY = mCurrentCell.mBoardPosition.y;
+
+        // Top left
+        MatchesState(targetX - mMovement.z, targetY + mMovement.z, CellState.Enemy);
+
+        // Forward
+        if(MatchesState(targetX, targetY + mMovement.y, CellState.Free))
+        {
+            // If the first forward cell is free, and first move, check för next
+            if(mIsFirstMove)
+            {
+                MatchesState(targetX, targetY + mMovement.y * 2, CellState.Free);
+            }
+        }
+
+        // Top right
+        MatchesState(targetX + mMovement.z, targetY + mMovement.z, CellState.Enemy);
+
+    }
 }
