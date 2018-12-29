@@ -44,21 +44,34 @@ public abstract class BasePiece : EventTrigger
     private void CreateCellPath(int xDircetion, int yDirection, int movement)
     {
         // Target possition
-        int currentX = mCurrentCell.mBoardPosition.x;
-        int currentY = mCurrentCell.mBoardPosition.y;
+        int targetX = mCurrentCell.mBoardPosition.x;
+        int targetY = mCurrentCell.mBoardPosition.y;
 
 
 
         // Check each cell
         for (int i = 1; i <= movement; i++)
         {
-            currentX += xDircetion;
-            currentY += yDirection;
+            targetX += xDircetion;
+            targetY += yDirection;
 
-            // TODo: Get the state of target cell
+            // Get the state of the taget cell
+            CellState cellState = CellState.None;
+            cellState = mCurrentCell.mBoard.ValidateCell(targetX, targetY, this);
 
+            // If enemy, add to list, break
+            if(cellState == CellState.Enemy)
+            {
+                mHighlightedCells.Add(mCurrentCell.mBoard.mAllCells[targetX, targetY]);
+                break;
+            }
+
+            // If the cell is not free, break
+            if(cellState != CellState.Free)
+                break;
+        
             // Add to list
-            mHighlightedCells.Add(mCurrentCell.mBoard.mAllCells[currentX, currentY]);
+            mHighlightedCells.Add(mCurrentCell.mBoard.mAllCells[targetX, targetY]);
 
         }
 
@@ -85,10 +98,6 @@ public abstract class BasePiece : EventTrigger
 
     protected void ShowCells()
     {
-
-
-        Debug.Log("Size: " + mHighlightedCells.Count);
-
         foreach (Cell cell in mHighlightedCells)
         {
             cell.mOutlineImage.enabled = true;
@@ -190,6 +199,9 @@ public abstract class BasePiece : EventTrigger
 
         // Move to new cell
         Move();
+
+        // End turn
+        mPieceManager.SwitchSides(mColor);
     }
 
     #endregion
