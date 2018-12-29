@@ -11,9 +11,6 @@ public class Pawn : BasePiece
         // Base setup
         base.Setup(newTeamColor, newSpriteColor, newPieceManager);
 
-        // Reset
-        mIsFirstMove = true;
-
         // Pawn stuff
         mMovement = mColor == Color.white ? new Vector3Int(0, 1, 1) : new Vector3Int(0, -1, -1);
         GetComponent<Image>().sprite = Resources.Load<Sprite>("T_Pawn");
@@ -23,7 +20,9 @@ public class Pawn : BasePiece
     {
         base.Move();
 
-        mIsFirstMove = true;
+        mIsFirstMove = false;
+
+        CheckForPromotion();
     }
 
     private bool MatchesState(int targetX, int targetY, CellState targetState)
@@ -38,6 +37,21 @@ public class Pawn : BasePiece
         }
 
         return false;
+    }
+
+    private void CheckForPromotion()
+    {
+        // Target position
+        int targetX = mCurrentCell.mBoardPosition.x;
+        int targetY = mCurrentCell.mBoardPosition.y;
+
+        CellState cellState = mCurrentCell.mBoard.ValidateCell(targetX, targetY + mMovement.y, this);
+
+        if(cellState == CellState.OutOfBounds)
+        {
+            Color spriteColor = GetComponent<Image>().color;
+            mPieceManager.PromotePiece(this, mCurrentCell, mColor, spriteColor);
+        }
     }
 
     protected override void CheckPathing()
@@ -62,5 +76,12 @@ public class Pawn : BasePiece
         // Top right
         MatchesState(targetX + mMovement.z, targetY + mMovement.z, CellState.Enemy);
 
+    }
+
+    public override void Reset()
+    {
+        base.Reset();
+
+        mIsFirstMove = true;
     }
 }

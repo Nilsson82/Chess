@@ -113,7 +113,7 @@ public abstract class BasePiece : EventTrigger
         mHighlightedCells.Clear();
     }
 
-    public void Reset()
+    public virtual void Reset()
     {
         Kill();
 
