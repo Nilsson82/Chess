@@ -111,7 +111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a6ff98f72e90634294e340a46b333f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mOutlineImage: {fileID: 0}
+  mOutlineImage: {fileID: 114070471298161070}
   mBoardPosition: {x: 0, y: 0}
   mBoard: {fileID: 0}
   mRectTransform: {fileID: 0}
