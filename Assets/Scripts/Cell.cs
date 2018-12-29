@@ -22,4 +22,12 @@ public class Cell : MonoBehaviour
 
         mRectTransform = GetComponent<RectTransform>();
     }
+
+    public void RemovePiece()
+    {
+        if(mCurrentPiece != null)
+        {
+            mCurrentPiece.Kill();
+        }
+    }
 }
