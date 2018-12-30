@@ -7,7 +7,7 @@ public abstract class BasePiece : EventTrigger
 {
     [HideInInspector]
     public Color mColor = Color.clear;
-    //public bool mIsFirstMove = true;
+    public bool mIsFirstMove = true;
 
     protected Cell mOriginalCell = null;
     protected Cell mCurrentCell = null;
@@ -113,7 +113,7 @@ public abstract class BasePiece : EventTrigger
         mHighlightedCells.Clear();
     }
 
-    public virtual void Reset()
+    public void Reset()
     {
         Kill();
 
@@ -132,6 +132,9 @@ public abstract class BasePiece : EventTrigger
 
     protected virtual void Move()
     {
+
+        mIsFirstMove = false;
+
         // If there us an enemy piece, remove it
         mTargetCell.RemovePiece();
 
